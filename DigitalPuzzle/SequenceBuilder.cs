@@ -4,7 +4,7 @@
     {
         public static string FindLongestSequence(string[] fragments)
         {
-            // Построим граф, где ключ — начальные две цифры, значение — список фрагментов, начинающихся с этих цифр
+
             var graph = new Dictionary<string, List<string>>();
             foreach (var fragment in fragments)
             {
@@ -16,7 +16,7 @@
                 graph[start].Add(fragment);
             }
 
-            // Найдём самую длинную последовательность
+
             string longestSequence = "";
             foreach (var fragment in fragments)
             {
@@ -36,7 +36,7 @@
             visited.Add(currentFragment);
             string longestSequence = currentFragment;
 
-            // Получаем последние две цифры текущего фрагмента
+
             string suffix = currentFragment.Substring(currentFragment.Length - 2, 2);
 
             if (graph.ContainsKey(suffix))
