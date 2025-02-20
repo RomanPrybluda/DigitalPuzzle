@@ -21,7 +21,7 @@
                     continue;
                 }
 
-                string[] fragments = FileParser.ParseFile(filePath);
+                var fragments = FileParser.ParseFragments(filePath);
 
                 if (fragments.Length == 0)
                 {
@@ -29,10 +29,10 @@
                     continue;
                 }
 
-                string longestSequence = SequenceBuilder.FindLongestSequence(fragments);
+                string sequence = EulerianPathSolver.FindLongestSequence(fragments);
 
-                Console.WriteLine("\nLongest sequence: " + longestSequence);
-                Console.WriteLine("Length of longest sequence: " + longestSequence.Length + "\n");
+                Console.WriteLine($"\nLongest sequence length: {sequence.Length}");
+                Console.WriteLine($"Length of longest sequence: {sequence} \n");
             }
         }
     }
