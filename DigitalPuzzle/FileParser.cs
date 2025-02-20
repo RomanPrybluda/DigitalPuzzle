@@ -2,26 +2,20 @@
 {
     static class FileParser
     {
-        public static int[][][] ParseFile(string filePath)
+        public static string[] ParseFile(string filePath)
         {
             var lines = File.ReadAllLines(filePath);
-            var parsedData = new List<int[][]>();
+            var fragments = new List<string>();
 
             foreach (var line in lines)
             {
-                if (line.Length < 6) continue;
-
-                var puzzle = new int[3][]
+                if (line.Length == 6)
                 {
-                new int[] { int.Parse(line.Substring(0, 2)) },
-                new int[] { int.Parse(line.Substring(2, 2)) },
-                new int[] { int.Parse(line.Substring(4, 2)) }
-                };
-
-                parsedData.Add(puzzle);
+                    fragments.Add(line);
+                }
             }
 
-            return parsedData.ToArray();
+            return fragments.ToArray();
         }
     }
 }

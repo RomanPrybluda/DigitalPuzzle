@@ -1,59 +1,61 @@
-﻿using System.Text;
-
-namespace DigitalPuzzle
+﻿namespace DigitalPuzzle
 {
     static class SequenceBuilder
     {
-        public static string FindLongestSequence(int[][][] fragments)
+        public static string FindLongestSequence(string[] fragments)
         {
-            var graph = BuildGraph(fragments);
-            string longestPath = "";
-
+            // Построим граф, где ключ — начальные две цифры, значение — список фрагментов, начинающихся с этих цифр
+            var graph = new Dictionary<string, List<string>>();
             foreach (var fragment in fragments)
             {
-                string path = DFS(fragment, new HashSet<int[][]>(fragments), graph);
-                if (path.Length > longestPath.Length)
+                string start = fragment.Substring(0, 2);
+                if (!graph.ContainsKey(start))
                 {
-                    longestPath = path;
+                    graph[start] = new List<string>();
+                }
+                graph[start].Add(fragment);
+            }
+
+            // Найдём самую длинную последовательность
+            string longestSequence = "";
+            foreach (var fragment in fragments)
+            {
+                var visited = new HashSet<string>();
+                string sequence = DFS(fragment, visited, graph);
+                if (sequence.Length > longestSequence.Length)
+                {
+                    longestSequence = sequence;
                 }
             }
 
-            return longestPath;
+            return longestSequence;
         }
 
-        private static Dictionary<int, List<int[][]>> BuildGraph(int[][][] fragments)
+        private static string DFS(string currentFragment, HashSet<string> visited, Dictionary<string, List<string>> graph)
         {
-            var graph = new Dictionary<int, List<int[][]>>();
+            visited.Add(currentFragment);
+            string longestSequence = currentFragment;
 
-            foreach (var fragment in fragments)
+            // Получаем последние две цифры текущего фрагмента
+            string suffix = currentFragment.Substring(currentFragment.Length - 2, 2);
+
+            if (graph.ContainsKey(suffix))
             {
-                int conNode = fragment[2][0];
-
-                if (!graph.ContainsKey(conNode))
-                    graph[conNode] = new List<int[][]>();
-
-                graph[conNode].Add(fragment);
-            }
-            return graph;
-        }
-
-        private static string DFS(int[][] current, HashSet<int[][]> unused, Dictionary<int, List<int[][]>> graph)
-        {
-            unused.Remove(current);
-            var sequence = new StringBuilder(string.Join("", current.SelectMany(x => x)));
-            int conNode = current[2][0];
-
-            while (graph.ContainsKey(conNode))
-            {
-                int[][]? nextFragment = graph[conNode].FirstOrDefault(unused.Contains);
-                if (nextFragment == null) break;
-
-                unused.Remove(nextFragment);
-                sequence.Append(string.Join("", nextFragment.SelectMany(x => x)));
-                conNode = nextFragment[2][0];
+                foreach (var nextFragment in graph[suffix])
+                {
+                    if (!visited.Contains(nextFragment))
+                    {
+                        string sequence = DFS(nextFragment, new HashSet<string>(visited), graph);
+                        string combinedSequence = currentFragment + sequence.Substring(2); // Убираем перекрывающиеся цифры
+                        if (combinedSequence.Length > longestSequence.Length)
+                        {
+                            longestSequence = combinedSequence;
+                        }
+                    }
+                }
             }
 
-            return sequence.ToString();
+            return longestSequence;
         }
     }
 }

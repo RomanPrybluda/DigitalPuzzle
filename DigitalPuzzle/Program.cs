@@ -21,12 +21,18 @@
                     continue;
                 }
 
-                int[][][] fragments = FileParser.ParseFile(filePath);
+                string[] fragments = FileParser.ParseFile(filePath);
+
+                if (fragments.Length == 0)
+                {
+                    Console.WriteLine("\nNo valid fragments found in the file.");
+                    continue;
+                }
 
                 string longestSequence = SequenceBuilder.FindLongestSequence(fragments);
 
-                Console.WriteLine("\nLongest sequence: " + longestSequence + "\n");
-
+                Console.WriteLine("\nLongest sequence: " + longestSequence);
+                Console.WriteLine("Length of longest sequence: " + longestSequence.Length + "\n");
             }
         }
     }
