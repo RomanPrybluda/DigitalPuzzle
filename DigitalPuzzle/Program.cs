@@ -9,11 +9,8 @@
                 Console.WriteLine("Enter the full file path (example C:/fragment.txt) or type 'q' to quit:");
                 string? filePath = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(filePath))
-                    continue;
-
-                if (filePath.ToLower() == "q")
-                    break;
+                if (string.IsNullOrWhiteSpace(filePath)) continue;
+                if (filePath.ToLower() == "q") break;
 
                 if (!File.Exists(filePath))
                 {
@@ -21,7 +18,7 @@
                     continue;
                 }
 
-                string[] fragments = FileParser.ParseFile(filePath);
+                FragmentData[] fragments = FileParser.ParseFile(filePath);
 
                 if (fragments.Length == 0)
                 {
@@ -32,7 +29,7 @@
                 string longestSequence = SequenceBuilder.FindLongestSequence(fragments);
 
                 Console.WriteLine("\nLongest sequence: " + longestSequence);
-                Console.WriteLine("Length of longest sequence: " + longestSequence.Length + "\n");
+                Console.WriteLine("Length: " + longestSequence.Length + "\n");
             }
         }
     }

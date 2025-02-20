@@ -2,17 +2,24 @@
 {
     static class FileParser
     {
-        public static string[] ParseFile(string filePath)
+        public static FragmentData[] ParseFile(string filePath)
         {
             var lines = File.ReadAllLines(filePath);
-            var fragments = new List<string>();
+            var fragments = new List<FragmentData>();
 
             foreach (var line in lines)
             {
-                if (line.Length == 6)
+                if (line.Length != 6) continue;
+
+                int start = int.Parse(line.Substring(0, 2));
+                int end = int.Parse(line.Substring(4, 2));
+
+                fragments.Add(new FragmentData
                 {
-                    fragments.Add(line);
-                }
+                    FullFragment = line,
+                    StartCode = start,
+                    EndCode = end
+                });
             }
 
             return fragments.ToArray();

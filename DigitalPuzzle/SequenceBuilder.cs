@@ -2,60 +2,52 @@
 {
     static class SequenceBuilder
     {
-        public static string FindLongestSequence(string[] fragments)
+        public static string FindLongestSequence(FragmentData[] fragments)
         {
-
-            var graph = new Dictionary<string, List<string>>();
-            foreach (var fragment in fragments)
+            var graph = new Dictionary<int, List<FragmentData>>();
+            foreach (var frag in fragments)
             {
-                string start = fragment.Substring(0, 2);
-                if (!graph.ContainsKey(start))
-                {
-                    graph[start] = new List<string>();
-                }
-                graph[start].Add(fragment);
+                if (!graph.ContainsKey(frag.StartCode))
+                    graph[frag.StartCode] = new List<FragmentData>();
+
+                graph[frag.StartCode].Add(frag);
             }
 
-
             string longestSequence = "";
-            foreach (var fragment in fragments)
+            foreach (var frag in fragments)
             {
-                var visited = new HashSet<string>();
-                string sequence = DFS(fragment, visited, graph);
+                var visited = new HashSet<FragmentData>();
+                string sequence = DFS(frag, visited, graph);
                 if (sequence.Length > longestSequence.Length)
-                {
                     longestSequence = sequence;
-                }
             }
 
             return longestSequence;
         }
 
-        private static string DFS(string currentFragment, HashSet<string> visited, Dictionary<string, List<string>> graph)
+        private static string DFS(FragmentData current, HashSet<FragmentData> visited, Dictionary<int, List<FragmentData>> graph)
         {
-            visited.Add(currentFragment);
-            string longestSequence = currentFragment;
+            visited.Add(current);
+            string bestPath = current.FullFragment;
 
-
-            string suffix = currentFragment.Substring(currentFragment.Length - 2, 2);
-
-            if (graph.ContainsKey(suffix))
+            if (graph.TryGetValue(current.EndCode, out var nextFragments))
             {
-                foreach (var nextFragment in graph[suffix])
+                foreach (var next in nextFragments)
                 {
-                    if (!visited.Contains(nextFragment))
+                    if (!visited.Contains(next))
                     {
-                        string sequence = DFS(nextFragment, new HashSet<string>(visited), graph);
-                        string combinedSequence = currentFragment + sequence.Substring(2); // Убираем перекрывающиеся цифры
-                        if (combinedSequence.Length > longestSequence.Length)
-                        {
-                            longestSequence = combinedSequence;
-                        }
+                        string path = DFS(next, new HashSet<FragmentData>(visited), graph);
+                        string merged = MergeFragments(current.FullFragment, path);
+                        if (merged.Length > bestPath.Length)
+                            bestPath = merged;
                     }
                 }
             }
 
-            return longestSequence;
+            return bestPath;
         }
+
+        private static string MergeFragments(string current, string next)
+            => current + next.Substring(2);
     }
 }
