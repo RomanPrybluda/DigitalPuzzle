@@ -32,7 +32,7 @@
                 string sequence = EulerianPathSolver.FindLongestSequence(fragments);
 
                 Console.WriteLine($"\nLongest sequence length: {sequence.Length}");
-                Console.WriteLine($"Length of longest sequence: {sequence} \n");
+                Console.WriteLine($"Longest sequence: {sequence} \n");
             }
         }
     }
